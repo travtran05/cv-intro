@@ -73,11 +73,15 @@ def get_slopes_intercepts(lines):
     intercepts = []
 
     for line in lines:
-        x1, y1, x2, y2 = line[0]
-        slope = (y2-y1)/(x2-x1)
-        slopes.append(slope)
-        intercept = ((((2160 - y1)/slope)  )+ x1)
-        intercepts.append(intercept)
+        try:
+            x1, y1, x2, y2 = line[0]
+            slope = (y2-y1)/(x2-x1)
+            slopes.append(slope)
+            intercept = ((((2160 - y1)/slope)  )+ x1)
+            intercepts.append(intercept)
+        
+        except ZeroDivisionError:
+            pass
 
     return slopes, intercepts
 
@@ -102,7 +106,7 @@ def detect_lanes(lines):
             for j in range (i+1,len(slopeList)):
                 
                 interceptDist = abs(xInterceptList[i]-xInterceptList[j])
-                slopeDiff = abs(1/ slopeList[i]-1 /slopeList[j]) 
+                slopeDiff = abs((1/ slopeList[i]) - (1/slopeList[j]))
                
                 if(interceptDist > 100 and interceptDist< 10000 and slopeDiff< 1):
                     
