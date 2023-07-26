@@ -101,19 +101,23 @@ def detect_lanes(lines):
             for j in range (i+1,len(slopes)):
 
 
-                if(abs(intercepts[i]-intercepts[j])< 500):
+                if(abs(intercepts[i]-intercepts[j])< 500  and  abs(slopes[i])-abs(slopes[j])<10):
 
-                    xPoint = ((slopes[i] * intercepts[i]) - (slopes[j] * intercepts[j]))/(slopes[i]-slopes[j])
+                    midpoint = 1
 
-                    yPoint = slopes[i]*(xPoint - intercepts[i]) + 1080
+                    if (True): #midpoint is dark
+
+                        xPoint = (intercepts[j]-intercepts[i])/(slopes[i]-slopes[j])
+
+                        yPoint = slopes[i] * xPoint + intercepts[i] 
+                        
+                        line1 = [1080, intercepts[i], xPoint, yPoint]
                     
-                    lane1 = [intercepts[i], 1080, xPoint,yPoint]
-                   
-                    lane2 = [intercepts[j], 1080, xPoint,yPoint]
+                        line2 = [1080, intercepts[j], xPoint, yPoint]
                     
                     
-                    addedlanes = [lane1,lane2]
-                    lanes.append(addedlanes)
+                    lane = [line1,line2]
+                    lanes.append(lane)
 
 
     return lanes
