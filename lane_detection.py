@@ -76,7 +76,7 @@ def get_slopes_intercepts(lines):
         x1, y1, x2, y2 = line[0]
         slope = (y2-y1)/(x2-x1)
         slopes.append(slope)
-        intercept = y1-slope*x1
+        intercept = ((((2160 - y1)/slope)  )+ x1)
         intercepts.append(intercept)
 
     return slopes, intercepts
@@ -94,30 +94,24 @@ def detect_lanes(lines):
     slopes, intercepts = get_slopes_intercepts(lines)
     lanes = []
 
-    if len(slopes)> 1:
+
+    for i in range(0,len(slopes)):
+        for j in range (i+1,len(slopes)):
 
 
-        for i in range(0,len(slopes)):
-            for j in range (i+1,len(slopes)):
+            if(abs(intercepts[i]-intercepts[j])< 500):
 
-
-                if(abs(intercepts[i]-intercepts[j])< 500  and  abs(slopes[i])-abs(slopes[j])<10):
-
-                    midpoint = 1
-
-                    if (True): #midpoint is dark
-
-                        xPoint = (intercepts[j]-intercepts[i])/(slopes[i]-slopes[j])
-
-                        yPoint = slopes[i] * xPoint + intercepts[i] 
-                        
-                        line1 = [1080, intercepts[i], xPoint, yPoint]
-                    
-                        line2 = [1080, intercepts[j], xPoint, yPoint]
-                    
-                    
-                    lane = [line1,line2]
-                    lanes.append(lane)
+        
+                xPoint = ((slopes[i] * intercepts[i]) - (slopes[j] * intercepts[j]))/(slopes[i]-slopes[j])
+                yPoint = slopes[i]*(xPoint - intercepts[i]) + 2160
+                
+            
+                line1 = [intercepts[i], 2160, xPoint,yPoint]
+                line2 = [intercepts[j], 2160, xPoint,yPoint]
+                
+                
+                lane = [line1,line2]
+                lanes.append(lane)
 
 
     return lanes
