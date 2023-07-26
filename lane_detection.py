@@ -90,7 +90,7 @@ def detect_lanes(lines):
     
     '''
 
-    lanes = []
+    lanes = [[]]
 
     slopes, intercepts = get_slopes_intercepts(lines)
 
@@ -100,7 +100,7 @@ def detect_lanes(lines):
     while point1 < len(lines):
         point2 = point1 + 1
         while point2 < len(lines):
-            if abs(slopes[point1]-slopes[point2]) <= 0.1:
+            if (slopes[point1]>0 and slopes[point2]>0) or (slopes[point1]<0 and slopes[point2]<0):
                 lane = [lines[point1], lines[point2]]
                 lanes.append[lane]
             point2 +=1
