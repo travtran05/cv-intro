@@ -40,4 +40,31 @@ def detect_lines(img, threshold1 = 50, threshold2 = 150, apertureSize = 3, minLi
 
     return lines
 
+def draw_lines(img, lines, color = (0,255,0)):
+    '''
+    takes an image and a list of lines as inputs and returns an image with the lines drawn on it
+
+    parameters:
+        img: the image to process
+        lines: the list of lines to draw
+        color: the color of the lines (default: (0, 255, 0))
+    
+    '''
+    try:
+        for line in lines:
+            x1, y1, x2, y2 = line[0]
+            cv2.line(img, (x1, y1), (x2, y2), color, 2)
+    except TypeError:
+        pass
+    return img
+
+def get_slopes_intercepts():
+    '''
+    that takes a list of lines as an input and returns a list of slopes and a list of intercepts
+
+    parameters:
+        slopes: the list of slopes
+        intercepts: the list of intercepts
+    
+    '''
     
