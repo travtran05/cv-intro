@@ -106,5 +106,28 @@ def detect_lanes(lines):
     return lanes
 
 
+def draw_lanes(img, lanes):
+    '''
+    takes an image and a list of lanes as inputs and returns an image with the lanes drawn on it. Each lane should be a different color
+
+    parameters:
+        img: the image to process
+        lanes: the list of lanes to draw
+    
+    
+    '''
+    try:
+        for lane in lanes:
+            x1, y1, x2, y2 = lane[0]
+            cv2.line(img, (x1, y1), (x2, y2), (0,255,0), 2)
+    except TypeError:
+        pass
+    plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+
+
+
+
+
+
 
 
