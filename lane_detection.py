@@ -88,22 +88,21 @@ def detect_lanes(lines):
     parameters:
         lines: the list of lines to process
     
-    
     '''
 
-    slopes, intercepts = get_slopes_intercepts(lines)
+    slopeList, xInterceptList = get_slopes_intercepts(lines)
+  
     lanes = []
-    for i in range(0,len(slopes)):
-        for j in range (i,len(slopes)):
-            if(abs(intercepts[i]-intercepts[j])< 500):
-                avgSlope = (slopes[i]+ slopes[j])/2
-
-                avgInterecept = (intercepts[i]+intercepts[j])/2
-                
-                lane = [avgInterecept, 1080, (100)+avgInterecept,(avgSlope)* -100   +1080]
-
-                lanes.append(lane)
-
+    if len(slopeList)> 1:
+        for i in range(0,len(slopeList)):
+            for j in range (i+1,len(slopeList)):
+                if(abs(xInterceptList[i]-xInterceptList[j])< 500):
+                    xPoint = ((slopeList[i] * xInterceptList[i]) - (slopeList[j] * xInterceptList[j]))/(slopeList[i]-slopeList[j])
+                    yPoint = slopeList[i]*(xPoint - xInterceptList[i]) + 1080
+                    lane1 = [xInterceptList[i], 1080, xPoint,yPoint]
+                    lane2 = [xInterceptList[j], 1080, xPoint,yPoint]
+                    addedlanes = [lane1,lane2]
+                    lanes.append(addedlanes)
 
     return lanes
 
