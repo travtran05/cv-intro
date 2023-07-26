@@ -33,7 +33,7 @@ def detect_lines(img, threshold1 = 50, threshold2 = 150, apertureSize = 3, minLi
                     edges, #described above
                     rho = 1, #1 pixel resolution parameter
                     theta = np.pi/180, # 1 degree resolution parameter
-                    threshold = 1, #min number of intersections/votes
+                    threshold = 60, #min number of intersections/votes
                     minLineLength = minLineLength,
                     maxLineGap = maxLineGap,
             ) # detect lines
@@ -100,7 +100,7 @@ def detect_lanes(lines):
     while point1 < len(lines):
         point2 = point1 + 1
         while point2 < len(lines):
-            if abs(slopes[point1]-slopes[point2]) <= 0.1 and slopes[point1]*((intercepts[point2]-intercepts[point1])/(slopes[point1]-slopes[point2])) - intercepts[point1] >= 0:
+            if abs(slopes[point1]-slopes[point2]) <= 0.1:
                 lane = [lines[point1], lines[point2]]
                 lanes.append[lane]
 
