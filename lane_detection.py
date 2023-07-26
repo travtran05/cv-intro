@@ -109,7 +109,6 @@ def detect_lanes(lines):
                 slopeDiff = abs((1/ slopeList[i]) - (1/slopeList[j]))
                
                 if(interceptDist > 100 and interceptDist< 10000 and slopeDiff< 1):
-                    
                     xPoint = ((slopeList[i] * xInterceptList[i]) - (slopeList[j] * xInterceptList[j]))/(slopeList[i]-slopeList[j])
                     yPoint = slopeList[i]*(xPoint - xInterceptList[i]) + 2160
                     
