@@ -91,27 +91,30 @@ def detect_lanes(lines):
     
     '''
 
-    slopes, intercepts = get_slopes_intercepts(lines)
+    slopeList, xInterceptList = get_slopes_intercepts(lines)
+    print (f"slopeList:{slopeList}")
+    print (f"xInterceptList:{xInterceptList}")
     lanes = []
-
-
-    for i in range(0,len(slopes)):
-        for j in range (i+1,len(slopes)):
-
-
-            if(abs(intercepts[i]-intercepts[j])< 500):
-
-        
-                xPoint = ((slopes[i] * intercepts[i]) - (slopes[j] * intercepts[j]))/(slopes[i]-slopes[j])
-                yPoint = slopes[i]*(xPoint - intercepts[i]) + 2160
+    #check of the lines intersect on the screen
+    if len(slopeList)> 1:
+        for i in range(0,len(slopeList)):
+           
+            for j in range (i+1,len(slopeList)):
                 
-            
-                line1 = [intercepts[i], 2160, xPoint,yPoint]
-                line2 = [intercepts[j], 2160, xPoint,yPoint]
-                
-                
-                lane = [line1,line2]
-                lanes.append(lane)
+                interceptDist = abs(xInterceptList[i]-xInterceptList[j])
+                slopeDiff = abs(1/ slopeList[i]-1 /slopeList[j]) 
+               
+                if(interceptDist > 100 and interceptDist< 10000 and slopeDiff< 1):
+                    
+                    xPoint = ((slopeList[i] * xInterceptList[i]) - (slopeList[j] * xInterceptList[j]))/(slopeList[i]-slopeList[j])
+                    yPoint = slopeList[i]*(xPoint - xInterceptList[i]) + 2160
+                    
+                  
+                    lane1 = [xInterceptList[i], 2160, xPoint,yPoint]
+                    lane2 = [xInterceptList[j], 2160, xPoint,yPoint]
+                    addedlanes = [lane1,lane2]
+
+                    lanes.append(addedlanes)
 
 
     return lanes
