@@ -27,15 +27,15 @@ def detect_lines(img, threshold1 = 50, threshold2 = 150, apertureSize = 3, minLi
 
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # convert to grayscale
-    edges = cv2.Canny(gray, 106, 107, apertureSize=3) # detect edges, gray is image in grayscale, 50 and 150 represent 2 images that have been 
+    edges = cv2.Canny(gray, threshold1, threshold2, apertureSize) # detect edges, gray is image in grayscale, 50 and 150 represent 2 images that have been 
                                                       # threshholded at 2 different levels, apertureSize controls how much light the image gets and how exposed it is
     lines = cv2.HoughLinesP(
                     edges, #described above
                     1, #1 pixel resolution parameter
                     np.pi/180, # 1 degree resolution parameter
                     60, #min number of intersections/votes
-                    minLineLength=475,
-                    maxLineGap=100,
+                    minLineLength,
+                    maxLineGap,
             ) # detect lines
 
     return lines
