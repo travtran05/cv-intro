@@ -31,11 +31,11 @@ def detect_lines(img, threshold1 = 50, threshold2 = 150, apertureSize = 3, minLi
                                                       # threshholded at 2 different levels, apertureSize controls how much light the image gets and how exposed it is
     lines = cv2.HoughLinesP(
                     edges, #described above
-                    1, #1 pixel resolution parameter
-                    np.pi/180, # 1 degree resolution parameter
-                    1, #min number of intersections/votes
-                    minLineLength,
-                    maxLineGap,
+                    rho = 1, #1 pixel resolution parameter
+                    theta = np.pi/180, # 1 degree resolution parameter
+                    threshold = 1, #min number of intersections/votes
+                    minLineLength = minLineLength,
+                    maxLineGap = maxLineGap,
             ) # detect lines
 
 
