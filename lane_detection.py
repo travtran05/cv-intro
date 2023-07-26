@@ -103,6 +103,8 @@ def detect_lanes(lines):
             if abs(slopes[point1]-slopes[point2]) <= 0.1:
                 lane = [lines[point1], lines[point2]]
                 lanes.append[lane]
+            point2 +=1
+        point1 +=1
 
     return lanes
 
@@ -119,8 +121,9 @@ def draw_lanes(img, lanes):
     '''
     try:
         for lane in lanes:
-            x1, y1, x2, y2 = lane[0]
-            cv2.line(img, (x1, y1), (x2, y2), (0,255,0), 2)
+            for line in lane:
+                x1, y1, x2, y2 = line[0]
+                cv2.line(img, (x1, y1), (x2, y2), (0,255,0), 2)
     except TypeError:
         pass
     plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
