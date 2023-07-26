@@ -135,3 +135,13 @@ def draw_lanes(img,lanes,color = (255, 0, 0)):
             color = (random.randint(0,255), random.randint(0,255), random.randint(0,255))
             cv2.line(img, (int(x1), int(y1)), (int(x2), int(y2)), color, 6)
     return img
+
+def draw_Single_lane(img,lanes,color = (255, 0, 0)):
+    #color = (randrange(255),randrange(255),randrange(255))
+    for lane in lanes:
+        
+        x1, y1, x2, y2 = lane
+    # print ("type(x1)")
+    #  print (lane)
+        cv2.line(img, (int(x1), int(y1)), (int(x2), int(y2)), color, 6)
+    return img
