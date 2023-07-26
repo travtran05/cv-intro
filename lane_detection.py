@@ -108,7 +108,6 @@ def detect_lanes(lines):
 
 def draw_lanes(img,lanes,color = (255, 0, 0)):
 
-
     '''
     takes an image and a list of lanes as inputs and returns an image with the lanes drawn on it. Each lane should be a different color
     parameters:
@@ -117,8 +116,10 @@ def draw_lanes(img,lanes,color = (255, 0, 0)):
 
     '''
 
-
-    for lane in lanes:
-        x1, y1, x2, y2 = lane
-        cv2.line(img, (int(x1), int(y1)), (int(x2), int(y2)), color, 6)
+    for addedLanes in lanes:
+        for lane in addedLanes:
+            x1, y1, x2, y2 = lane
+            print ("type(x1)")
+            print (lane)
+            cv2.line(img, (int(x1), int(y1)), (int(x2), int(y2)), color, 6)
     return img
