@@ -20,5 +20,41 @@ def get_lane_center(lanes):
 
     
     '''
+    center = (lanes[0][0]+lanes[1][0])/2
+    x1, y1, x2, y2 = lanes[0]
+    slope1 = (y1-y2)/(x1-x2)
+    x1, y1, x2, y2 = lanes[1]
+    slope2 = (y1-y2)/(x1-x2)
+    slope = (slope1+slope2)/2
 
     
+
+    return center, slope
+
+
+def recommend_direction(center, slope):
+    '''
+    takes the center of the closest lane and its slope as inputs and returns a direction
+
+
+    parameters:
+        center: the center of the closest lane
+        slope: the slope of the closest lane
+    
+    
+    '''
+
+    halfOfRes = 4096/2
+    if center == halfOfRes:
+        direction = "forward"
+    elif center > halfOfRes: # more than halfway
+        print("strafe right")
+        direction = "right"
+    else:
+        print("strafe left")
+        direction = "left"
+    if 1/slope > 0:
+        print("turn right")
+    if 1/slope < 0:
+        print("turn Left")
+    return direction

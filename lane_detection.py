@@ -110,11 +110,11 @@ def detect_lanes(lines):
                     yPoint = slopeList[i]*(xPoint - xInterceptList[i]) + 2160
                     
                   
-                    lane1 = [xInterceptList[i], 2160, xPoint,yPoint]
-                    lane2 = [xInterceptList[j], 2160, xPoint,yPoint]
-                    addedlanes = [lane1,lane2]
+                    line1 = [xInterceptList[i], 2160, xPoint,yPoint]
+                    line2 = [xInterceptList[j], 2160, xPoint,yPoint]
+                    lane = [line1,line2]
 
-                    lanes.append(addedlanes)
+                    lanes.append(lane)
 
 
     return lanes
