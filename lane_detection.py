@@ -92,8 +92,8 @@ def detect_lanes(lines):
     '''
 
     slopeList, xInterceptList = get_slopes_intercepts(lines)
-    print (f"slopeList:{slopeList}")
-    print (f"xInterceptList:{xInterceptList}")
+    # print (f"slopeList:{slopeList}")
+    # print (f"xInterceptList:{xInterceptList}")
     lanes = []
     #check of the lines intersect on the screen
     if len(slopeList)> 1:
