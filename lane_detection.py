@@ -81,6 +81,7 @@ def get_slopes_intercepts(lines):
     return slopes, intercepts
 
 def detect_lanes(lines):
+
     '''
     takes a list of lines as an input and returns a list of lanes
 
@@ -90,48 +91,35 @@ def detect_lanes(lines):
     
     '''
 
-    lanes = [[]]
-
     slopes, intercepts = get_slopes_intercepts(lines)
+    lanes = []
+    for i in range(0,len(slopes)):
+        for j in range (i,len(slopes)):
+            if(abs(intercepts[i]-intercepts[j])< 500):
+                avgSlope = (slopes[i]+ slopes[j])/2
 
-    point1 = 0
-    point2 = 0
+                avgInterecept = (intercepts[i]+intercepts[j])/2
+                
+                lane = [avgInterecept, 1080, (100)+avgInterecept,(avgSlope)* -100   +1080]
 
-    while point1 < len(lines):
-        point2 = point1 + 1
-        while point2 < len(lines):
-            if (slopes[point1]>0 and slopes[point2]>0) or (slopes[point1]<0 and slopes[point2]<0):
-                lane = [lines[point1], lines[point2]]
-                lanes.append[lane]
-            point2 +=1
-        point1 +=1
+                lanes.append(lane)
+
 
     return lanes
 
+def draw_lanes(img,lanes,color = (255, 0, 0)):
 
-def draw_lanes(img, lanes):
+
     '''
     takes an image and a list of lanes as inputs and returns an image with the lanes drawn on it. Each lane should be a different color
-
     parameters:
         img: the image to process
         lanes: the list of lanes to draw
-    
-    
+
     '''
-    try:
-        for lane in lanes:
-            for line in lane:
-                x1, y1, x2, y2 = line[0]
-                cv2.line(img, (x1, y1), (x2, y2), (0,255,0), 2)
-    except TypeError:
-        pass
-    plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
 
 
-
-
-
-
-
-
+    for lane in lanes:
+        x1, y1, x2, y2 = lane
+        cv2.line(img, (int(x1), int(y1)), (int(x2), int(y2)), color, 6)
+    return img
