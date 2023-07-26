@@ -33,7 +33,7 @@ def detect_lines(img, threshold1 = 50, threshold2 = 150, apertureSize = 3, minLi
                     edges, #described above
                     1, #1 pixel resolution parameter
                     np.pi/180, # 1 degree resolution parameter
-                    60, #min number of intersections/votes
+                    1, #min number of intersections/votes
                     minLineLength,
                     maxLineGap,
             ) # detect lines
