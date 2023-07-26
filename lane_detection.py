@@ -79,4 +79,30 @@ def get_slopes_intercepts(lines):
 
     return slopes, intercepts
 
+def detect_lanes(lines):
+    '''
+    takes a list of lines as an input and returns a list of lanes
+
+    parameters:
+        lines: the list of lines to process
+    
+    
+    '''
+
+    lanes = []
+
+    slopes, intercepts = get_slopes_intercepts(lines)
+
+    point1 = 0
+    point2 = 0
+
+    while point1 < len(lines):
+        point2 = point1 + 1
+        while point2 < len(lines):
+            if abs(slopes[point1]-slopes[point2]) < 0.1 and :
+                lane = [lines[point1], lines[point2]]
+                lanes.append[lane]
+
+
+
 
