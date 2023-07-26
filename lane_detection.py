@@ -8,6 +8,7 @@ Problems 1 and 2 for simple computer vision
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+import random
 
 
 def detect_lines(img, threshold1 = 50, threshold2 = 150, apertureSize = 3, minLineLength = 100, maxLineGap = 10):
@@ -90,19 +91,30 @@ def detect_lanes(lines):
     
     '''
 
-    slopeList, xInterceptList = get_slopes_intercepts(lines)
-  
+    slopes, intercepts = get_slopes_intercepts(lines)
     lanes = []
-    if len(slopeList)> 1:
-        for i in range(0,len(slopeList)):
-            for j in range (i+1,len(slopeList)):
-                if(abs(xInterceptList[i]-xInterceptList[j])< 500):
-                    xPoint = ((slopeList[i] * xInterceptList[i]) - (slopeList[j] * xInterceptList[j]))/(slopeList[i]-slopeList[j])
-                    yPoint = slopeList[i]*(xPoint - xInterceptList[i]) + 1080
-                    lane1 = [xInterceptList[i], 1080, xPoint,yPoint]
-                    lane2 = [xInterceptList[j], 1080, xPoint,yPoint]
+
+    if len(slopes)> 1:
+
+
+        for i in range(0,len(slopes)):
+            for j in range (i+1,len(slopes)):
+
+
+                if(abs(intercepts[i]-intercepts[j])< 500):
+
+                    xPoint = ((slopes[i] * intercepts[i]) - (slopes[j] * intercepts[j]))/(slopes[i]-slopes[j])
+
+                    yPoint = slopes[i]*(xPoint - intercepts[i]) + 1080
+                    
+                    lane1 = [intercepts[i], 1080, xPoint,yPoint]
+                   
+                    lane2 = [intercepts[j], 1080, xPoint,yPoint]
+                    
+                    
                     addedlanes = [lane1,lane2]
                     lanes.append(addedlanes)
+
 
     return lanes
 
@@ -116,10 +128,9 @@ def draw_lanes(img,lanes,color = (255, 0, 0)):
 
     '''
 
-    for addedLanes in lanes:
-        for lane in addedLanes:
-            x1, y1, x2, y2 = lane
-            print ("type(x1)")
-            print (lane)
+    for lane in lanes:
+        for line in lane:
+            x1, y1, x2, y2 = line
+            color = (random.randint(0,255), random.randint(0,255), random.randint(0,255))
             cv2.line(img, (int(x1), int(y1)), (int(x2), int(y2)), color, 6)
     return img
