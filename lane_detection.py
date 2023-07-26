@@ -58,13 +58,25 @@ def draw_lines(img, lines, color = (0,255,0)):
         pass
     return img
 
-def get_slopes_intercepts():
+def get_slopes_intercepts(lines):
     '''
-    that takes a list of lines as an input and returns a list of slopes and a list of intercepts
+    takes a list of lines as an input and returns a list of slopes and a list of intercepts
 
     parameters:
-        slopes: the list of slopes
-        intercepts: the list of intercepts
+        lines: the list of lines to process
     
     '''
-    
+
+    slopes = []
+    intercepts = []
+
+    for line in lines:
+        x1, y1, x2, y2 = line[0]
+        slope = (y2-y1)/(x2-x1)
+        slopes.append(slope)
+        intercept = (y1-slope*x1)/slope*(-1)
+        intercepts.append(intercept)
+
+    return slopes, intercepts
+
+
