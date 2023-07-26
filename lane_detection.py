@@ -38,13 +38,8 @@ def detect_lines(img, threshold1 = 50, threshold2 = 150, apertureSize = 3, minLi
                     maxLineGap,
             ) # detect lines
 
-    arr_lines = []
 
-    for line in lines:
-        x1, y1, x2, y2 = line[0]
-        arr_lines.append[line[0]]
-
-    return arr_lines
+    return lines
 
 def draw_lines(img, lines, color = (0,255,0)):
     '''
