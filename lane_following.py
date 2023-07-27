@@ -78,5 +78,10 @@ def recommend_direction(center, slope):
         direction = "right"
     else:
         direction = "left"
+
+    if 1/slope > 0:
+        print("turn right")
+    if 1/slope < 0:
+        print("turn Left")
    
     return direction
