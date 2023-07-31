@@ -79,7 +79,7 @@ def recommend_direction(center, slope):
 
     halfOfRes = 4096/2
     if center == halfOfRes:
-        direction = "forward"
+        direction = "forward" # supposed to have [100,100, -100, -100 ,0,0]
     elif center > halfOfRes: # more than halfway
         direction = "right"
     else:
