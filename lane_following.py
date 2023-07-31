@@ -39,24 +39,14 @@ def get_lane_center(lanes):
     
     '''
 
-    clane = pick_lane(lanes)
-
-
-    center = (clane[0][0]+clane[1][0])/2
-
-    x1, y1, x2, y2 = clane[0]
-
+    center_intercept = (lanes[0][0]+lanes[1][0])/2
+    x1, y1, x2, y2 = lanes[0]
     slope1 = (y1-y2)/(x1-x2)
-
-    x1, y1, x2, y2 = clane[1]
-
+    x1, y1, x2, y2 = lanes[1]
     slope2 = (y1-y2)/(x1-x2)
-
-    slope = (slope1+slope2)/2
-
-    
-
-    return center, slope
+    center_slope = 1/(((1/slope1)+(1/slope2))/2)
+    center_intercept = ((((1080 - y2)/center_slope)  )+ x2)
+    return center_intercept, center_slope
 
 def draw_center_lane(img, center_intercept, center_slope, xPoint = 0, yPoint = 0):
     global imgPixelHeight 
@@ -77,17 +67,21 @@ def recommend_direction(center, slope):
     
     '''
 
-    halfOfRes = 4096/2
-    if center == halfOfRes:
-        direction = "forward" # supposed to have [100,100, -100, -100 ,0,0]
-    elif center > halfOfRes: # more than halfway
-        direction = "right"
+    halfOfRes = 1920/2
+    HorizontalDiff = halfOfRes-center
+    centerTolerance = 2.5
+    if abs(HorizontalDiff) < centerTolerance:
+        direction = "Go Forward!"
+    elif HorizontalDiff > 0:# more than halfway
+        #print("strafe right")
+        direction = f"Strafe Left by {HorizontalDiff}"
     else:
-        direction = "left"
-
+        #print("strafe left")
+        direction = f"Strafe Right by {HorizontalDiff}"
     if 1/slope > 0:
-        print("turn right")
+        direction += f" turn Left by: {1/slope}"
+        pass#print("turn right")
     if 1/slope < 0:
-        print("turn Left")
-   
+        direction += f" turn Right by: {1/slope}"
+        pass#print("turn Left")
     return direction
