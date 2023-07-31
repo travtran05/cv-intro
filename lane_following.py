@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import random
 import lane_detection
 import math
+from statistics import median
 
 def pick_lane(lanes):
     '''
@@ -85,3 +86,27 @@ def recommend_direction(center, slope):
         direction += f" turn Right by: {AproxAUVAngle} degrees"
         pass#print("turn Left")
     return direction
+
+
+def low_pass_filter_moving_median(input_data, window_size):
+    """
+    Apply a first-order low-pass filter using the Moving Median method to the input data.
+
+    Parameters:
+        input_data (list or numpy array): Input data to be filtered.
+        window_size (int): The size of the moving window used for computing the median.
+
+    Returns:
+        list: Filtered output data.
+    """
+    half_window = window_size // 2
+    filtered_data = []
+
+    for i in range(len(input_data)):
+        start_idx = max(0, i - half_window)
+        end_idx = min(len(input_data), i + half_window + 1)
+        window = input_data[start_idx:end_idx]
+        filtered_value = median(window)
+        filtered_data.append(filtered_value)
+
+    return filtered_data
