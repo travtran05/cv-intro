@@ -135,20 +135,18 @@ def detect_lanes(lines):
                 slopeThing = 1000000
                 if  not slopeList[i] == 0:
                     slopeThing = 1/slopeList[i]
-                #print(f"DistREQ:{abs(xInterceptList[i]-xInterceptList[j])}")
-                #print(f"slopeREQ:{abs(1/ slopeList[i]-1 /slopeList[j])}")
+              
                 # if statement to make sure lane is not too big (multiple lanes as one) not too different in slope (wrong side/ different lanes) and not too horizontal (other lienes reced as pool lane)
                 if(InterceptDist > 100 and InterceptDist< 750 and slopeDiff< 1 and abs(slopeThing) < 3 ):
-                    print(f"1/ slope:{slopeThing}")
+                    #print(f"1/ slope:{slopeThing}")
                     xPoint = ((slopeList[i] * xInterceptList[i]) - (slopeList[j] * xInterceptList[j]))/(slopeList[i]-slopeList[j])
                     yPoint = slopeList[i]*(xPoint - xInterceptList[i]) + 1080
                     
-                    # avgSlope = (slopeList[i]+ slopeList[j])/2
-                    # avgInterecept = (xInterceptList[i]+xInterceptList[j])/2
+            
                     lane1 = [xInterceptList[i], 1080, xPoint, yPoint]
                     lane2 = [xInterceptList[j], 1080, xPoint, yPoint]
                     addedlanes = [lane1,lane2]
-                    #print (f"thiasdfee:{(slopeList[i] * xInterceptList[i]) - slopeList[j] * xInterceptList[j]}")
+                    
                     lanes.append(addedlanes)
             #     lanes.append(lane)
 
