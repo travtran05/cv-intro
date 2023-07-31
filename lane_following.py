@@ -13,33 +13,7 @@ import lane_detection
 import math
 from statistics import median
 
-def pick_lane(lanes):
-    '''
-    helper function for get_lane_center
-    finds the closet lane from a list of lanes
-    
-    '''
-
-    maxDiff = 0
-    for addedLanes in lanes:
-        diff = abs(addedLanes[0][0]  - addedLanes[1][0])
-        if (maxDiff < diff):
-            maxDiff = diff
-            pickedLane = addedLanes
-    
-    return pickedLane
-
-
 def get_lane_center(lanes):
-    '''
-    takes a list of lanes as an input and returns the center of the closest lane and its slope
-
-    parameters:
-        lanes: the list of lanes to process
-
-    
-    '''
-
     center_intercept = (lanes[0][0]+lanes[1][0])/2
     x1, y1, x2, y2 = lanes[0]
     slope1 = (y1-y2)/(x1-x2)
@@ -55,14 +29,8 @@ def draw_center_lane(img, center_intercept, center_slope, xPoint = 0, yPoint = 0
     cv2.line(img, (int(center_intercept), imgPixelHeight), (int(xPoint), int(yPoint)), (0,0,255), 6)
     return img
 
-
 def recommend_direction(center, slope):
-    '''
-    takes the center of the closest lane and its slope as inputs and returns a direction
-    parameters:
-        center: the center of the closest lane
-        slope: the slope of the closest lane
-    '''
+    
     halfOfRes = 1920/2
     HorizontalDiff = halfOfRes-center
     centerTolerance = 2.5
