@@ -58,15 +58,10 @@ def draw_center_lane(img, center_intercept, center_slope, xPoint = 0, yPoint = 0
 def recommend_direction(center, slope):
     '''
     takes the center of the closest lane and its slope as inputs and returns a direction
-
-
     parameters:
         center: the center of the closest lane
         slope: the slope of the closest lane
-    
-    
     '''
-
     halfOfRes = 1920/2
     HorizontalDiff = halfOfRes-center
     centerTolerance = 2.5
