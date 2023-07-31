@@ -156,3 +156,13 @@ def draw_Single_lane(img,lanes,color = (255, 0, 0)):
     #  print (lane)
         cv2.line(img, (int(x1), int(y1)), (int(x2), int(y2)), color, 6)
     return img
+
+def pick_lane(lanes):
+    maxDiff = 0
+    for addedLanes in lanes:
+        diff = abs(addedLanes[0][0]  - addedLanes[1][0])
+        if (maxDiff < diff):
+            maxDiff = diff
+            pickedLane = addedLanes
+    
+    return pickedLane

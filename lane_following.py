@@ -58,6 +58,12 @@ def get_lane_center(lanes):
 
     return center, slope
 
+def draw_center_lane(img, center_intercept, center_slope, xPoint = 0, yPoint = 0):
+    global imgPixelHeight 
+    imgPixelHeight  = img.shape[0]
+    cv2.line(img, (int(center_intercept), imgPixelHeight), (int(xPoint), int(yPoint)), (0,0,255), 6)
+    return img
+
 
 def recommend_direction(center, slope):
     '''
