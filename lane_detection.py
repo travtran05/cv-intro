@@ -29,11 +29,28 @@ def detect_lines(img,threshold1 = 50,threshold2 = 150,apertureSize = 3,minLineLe
     
     '''
 
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # convert to grayscale
-    blurred_image = cv2.GaussianBlur(gray, (9, 9), 0)
-    #plt.imshow(cv2.cvtColor(blurred_image, cv2.COLOR_BGR2RGB))
-    #plt.show()
-    edges = cv2.Canny(blurred_image, threshold1, threshold2, apertureSize) # detect edges
+   
+    
+    lab= cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
+    l_channel, a, b = cv2.split(lab)
+
+    # Applying CLAHE to L-channel
+    # feel free to try different values for the limit and grid size:
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+    cl = clahe.apply(l_channel)
+
+    # merge the CLAHE enhanced L-channel with the a and b channel
+    limg = cv2.merge((cl,a,b))
+
+    # Converting image from LAB Color model to BGR color spcae
+    enhanced_img = cv2.cvtColor(limg, cv2.COLOR_LAB2BGR)
+
+   
+    gray = cv2.cvtColor(enhanced_img, cv2.COLOR_BGR2GRAY) # convert to grayscale
+    
+    
+    edges = cv2.Canny(gray, threshold1, threshold2, apertureSize) # detect edges
+   
     lines = cv2.HoughLinesP(
             edges,
             rho = 1,
@@ -44,10 +61,7 @@ def detect_lines(img,threshold1 = 50,threshold2 = 150,apertureSize = 3,minLineLe
 
 
     )
-    #plt.imshow(cv2.cvtColor(edges, cv2.COLOR_BGR2RGB))
-    #plt.show()
-    #print (lines)
-    #be close enough, have similar slopes, be on the same side of the image
+    
     return lines
 
 
