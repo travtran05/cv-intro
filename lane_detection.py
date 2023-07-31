@@ -9,9 +9,10 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import random
-import math
+import math 
 
-def detect_lines(img, threshold1 = 50, threshold2 = 150, apertureSize = 3, minLineLength = 100, maxLineGap = 10):
+def detect_lines(img,threshold1 = 50,threshold2 = 150,apertureSize = 3,minLineLength=100,maxLineGap=10):
+
     '''
     
     takes an image as an input and returns a list of detected lines
@@ -26,21 +27,28 @@ def detect_lines(img, threshold1 = 50, threshold2 = 150, apertureSize = 3, minLi
     
     '''
 
-
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # convert to grayscale
-    edges = cv2.Canny(gray, threshold1, threshold2, apertureSize = apertureSize) # detect edges, gray is image in grayscale, 50 and 150 represent 2 images that have been 
-                                                      # threshholded at 2 different levels, apertureSize controls how much light the image gets and how exposed it is
+    blurred_image = cv2.GaussianBlur(gray, (9, 9), 0)
+    #plt.imshow(cv2.cvtColor(blurred_image, cv2.COLOR_BGR2RGB))
+    #plt.show()
+    edges = cv2.Canny(blurred_image, threshold1, threshold2, apertureSize) # detect edges
     lines = cv2.HoughLinesP(
-                    edges, #described above
-                    rho = 1, #1 pixel resolution parameter
-                    theta = np.pi/180, # 1 degree resolution parameter
-                    threshold = 125, #min number of intersections/votes
-                    minLineLength = minLineLength,
-                    maxLineGap = maxLineGap,
-            ) # detect lines
+            edges,
+            rho = 1,
+            theta = np.pi/180,
+            threshold = 100,
+            minLineLength = minLineLength,
+            maxLineGap = maxLineGap,
 
 
+    )
+    #plt.imshow(cv2.cvtColor(edges, cv2.COLOR_BGR2RGB))
+    #plt.show()
+    #print (lines)
+    #be close enough, have similar slopes, be on the same side of the image
     return lines
+
+
 
 def draw_lines(img, lines, color = (0,255,0)):
     '''
