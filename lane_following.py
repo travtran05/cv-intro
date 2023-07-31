@@ -10,7 +10,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 import lane_detection
-
+import math
 
 def pick_lane(lanes):
     '''
@@ -79,7 +79,7 @@ def recommend_direction(center, slope):
         #print("strafe left")
         direction = f"Strafe Right by {HorizontalDiff}"
 
-    AproxAUVAngle = 90 - angle_between_lines(slope, 0)  
+    AproxAUVAngle = 90 - lane_detection.angle_between_lines(slope, 0)  
     # get the approx angle of the auv with the line by calculating the slope of the 
     #center line with a horizontal line relative to the rov
     if slope > 0:
