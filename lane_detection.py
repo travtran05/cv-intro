@@ -73,52 +73,60 @@ def get_slopes_intercepts(lines):
     intercepts = []
 
     for line in lines:
-        try:
-            x1, y1, x2, y2 = line[0]
-            slope = (y2-y1)/(x2-x1)
-            slopes.append(slope)
-            intercept = ((((2160 - y1)/slope)  )+ x1)
-            intercepts.append(intercept)
         
-        except ZeroDivisionError:
-            pass
+        x1, y1, x2, y2 = line[0]
+        try:
+            slope = (y2-y1)/(x2-x1)
+        except ZeroDivisionError or RuntimeWarning:
+            continue
+        slopes.append(slope)
+        try:
+            intercept = ((((2160 - y1)/slope)  )+ x1)
+        except ZeroDivisionError or RuntimeWarning:
+            continue
+        intercepts.append(intercept)
+        
+        
 
     return slopes, intercepts
 
 def detect_lanes(lines):
-
-    '''
-    takes a list of lines as an input and returns a list of lanes
-
-    parameters:
-        lines: the list of lines to process
-    
-    '''
-
     slopeList, xInterceptList = get_slopes_intercepts(lines)
-    # print (f"slopeList:{slopeList}")
-    # print (f"xInterceptList:{xInterceptList}")
+    #print (f"slopeList:{slopeList}")
+    #print (f"xInterceptList:{xInterceptList}")
     lanes = []
     #check of the lines intersect on the screen
     if len(slopeList)> 1:
         for i in range(0,len(slopeList)):
-           
+            # if (len(slopeList) > 1):
+            #     i += 1
+            #     print("added i")
             for j in range (i+1,len(slopeList)):
                 
-                interceptDist = abs(xInterceptList[i]-xInterceptList[j])
-                slopeDiff = abs((1/ slopeList[i]) - (1/slopeList[j]))
-               
-                if(interceptDist > 100 and interceptDist< 10000 and slopeDiff< 1):
+                InterceptDist = abs(xInterceptList[i]-xInterceptList[j])
+                if slopeList[i] == 0 or slopeList[j == 0]:
+                    slopeDiff = 0
+                else:
+                    slopeDiff = abs(1/ slopeList[i]-1 /slopeList[j])
+                slopeThing = 1000000
+                if  not slopeList[i] == 0:
+                    slopeThing = 1/slopeList[i]
+                #print(f"DistREQ:{abs(xInterceptList[i]-xInterceptList[j])}")
+                #print(f"slopeREQ:{abs(1/ slopeList[i]-1 /slopeList[j])}")
+                # if statement to make sure lane is not too big (multiple lanes as one) not too different in slope (wrong side/ different lanes) and not too horizontal (other lienes reced as pool lane)
+                if(InterceptDist > 100 and InterceptDist< 750 and slopeDiff< 1 and abs(slopeThing) < 3 ):
+                    print(f"1/ slope:{slopeThing}")
                     xPoint = ((slopeList[i] * xInterceptList[i]) - (slopeList[j] * xInterceptList[j]))/(slopeList[i]-slopeList[j])
-                    yPoint = slopeList[i]*(xPoint - xInterceptList[i]) + 2160
+                    yPoint = slopeList[i]*(xPoint - xInterceptList[i]) + 1080
                     
-                  
-                    line1 = [xInterceptList[i], 2160, xPoint,yPoint]
-                    line2 = [xInterceptList[j], 2160, xPoint,yPoint]
-                    lane = [line1,line2]
-
-                    lanes.append(lane)
-
+                    # avgSlope = (slopeList[i]+ slopeList[j])/2
+                    # avgInterecept = (xInterceptList[i]+xInterceptList[j])/2
+                    lane1 = [xInterceptList[i], 1080, xPoint, yPoint]
+                    lane2 = [xInterceptList[j], 1080, xPoint, yPoint]
+                    addedlanes = [lane1,lane2]
+                    #print (f"thiasdfee:{(slopeList[i] * xInterceptList[i]) - slopeList[j] * xInterceptList[j]}")
+                    lanes.append(addedlanes)
+            #     lanes.append(lane)
 
     return lanes
 
