@@ -206,7 +206,7 @@ def pick_lane(lanes):
         trueDistToCenter = np.sqrt(pow(VertDistToCenter,2)+pow(HortDistToCenter,2))
     
         laneFitness = LineAngle #use lineangle as a analog for how close the lane is 
-        print (laneFitness)
+        #print (laneFitness)
         
         if (maxLaneFitness < laneFitness and LineAngle < 50):
             maxLaneFitness = laneFitness
