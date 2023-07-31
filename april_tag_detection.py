@@ -2,7 +2,7 @@ import cv2
 from dt_apriltags import Detector
 import numpy
 import matplotlib.pyplot as plt
-from PIDcontrols import *
+from pid2 import *
 
 def PID_tags(frameShape, horizontal_distance, vertical_distance, horizontal_pid, vertical_pid):
     horizontal_error = (frameShape[0]/2)-horizontal_distance
