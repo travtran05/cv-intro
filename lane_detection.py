@@ -166,3 +166,14 @@ def pick_lane(lanes):
             pickedLane = addedLanes
     
     return pickedLane
+
+def angle_between_lines(m1, m2):
+    """
+    Calculate the angle between two lines given their slopes.
+    :param m1: Slope of line 1
+    :param m2: Slope of line 2
+    :return: Angle between the two lines in degrees
+    """
+    tan_theta = abs((m2 - m1) / (1 + m1 * m2))
+    theta = math.atan(tan_theta)
+    return math.degrees(theta)

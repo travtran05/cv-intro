@@ -78,10 +78,15 @@ def recommend_direction(center, slope):
     else:
         #print("strafe left")
         direction = f"Strafe Right by {HorizontalDiff}"
-    if 1/slope > 0:
-        direction += f" turn Left by: {1/slope}"
+
+    AproxAUVAngle = 90 - angle_between_lines(slope, 0)  
+    # get the approx angle of the auv with the line by calculating the slope of the 
+    #center line with a horizontal line relative to the rov
+    if slope > 0:
+        AproxAUVAngle = -AproxAUVAngle
+        direction += f" turn Left by: {AproxAUVAngle} degrees"
         pass#print("turn right")
-    if 1/slope < 0:
-        direction += f" turn Right by: {1/slope}"
+    if slope < 0:
+        direction += f" turn Right by: {AproxAUVAngle} degrees"
         pass#print("turn Left")
     return direction
