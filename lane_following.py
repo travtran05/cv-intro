@@ -56,79 +56,85 @@ def recommend_direction(center, slope):
     return direction
 
 
-def low_pass_filter_moving_median(input_data, window_size):
-    """
-    Apply a first-order low-pass filter using the Moving Median method to the input data.
-
-    Parameters:
-        input_data (list or numpy array): Input data to be filtered.
-        window_size (int): The size of the moving window used for computing the median.
-
-    Returns:
-        list: Filtered output data.
-    """
-    half_window = window_size // 2
-    filtered_data = []
-
-    for i in range(len(input_data)):
-        start_idx = max(0, i - half_window)
-        end_idx = min(len(input_data), i + half_window + 1)
-        window = input_data[start_idx:end_idx]
-        filtered_value = median(window)
-        filtered_data.append(filtered_value)
-
-    return filtered_data
-
-def PIDoutputPosition(horizontal_diff, pid):
-    pid_input = low_pass_filter_moving_median(horizontal_diff, 100)
-    #pid = PID(50, 1, -27.5, 100)
-
-    pid_output = pid.update(pid_input)
-    return pid_output
-
-#def thrusterDirections(center, slope):
-
-def set_horizontal_control(horizontal_diff, pid_output):
-    # Calculate the power contribution for a thruster based on its angle and PID output
-    thruster_power = pid_output * np.cos(np.pi/4)
-
-    # Scale the power to the range of -100 to 100
-    scaled_power = thruster_power * 100.0
-
-    # Limit the scaled power to the range of -100 to 100
-    #power_percentage = max(min(scaled_power, 100.0), -100.0)
-    power_percentage = np.clip(scaled_power, -100, 100)
-
-    thruster_magnitudes = []
-    if(horizontal_diff < 0):
-        thruster_magnitudes = [-power_percentage, power_percentage, -power_percentage, power_percentage, 0, 0]
-    elif(horizontal_diff > 0):
-        thruster_magnitudes = [power_percentage, -power_percentage, power_percentage, -power_percentage, 0, 0]
-    else:
-        thruster_magnitudes = [0, 0, 0, 0, 0, 0]
-    return thruster_magnitudes
 
 
-def set_heading_control(heading_diff, pid_output):
-    # Calculate the power contribution for a thruster based on its angle and PID output
-    thruster_power = pid_output * np.cos(np.pi/4)
 
-    # Scale the power to the range of -100 to 100
-    scaled_power = thruster_power * 100.0
 
-    # Limit the scaled power to the range of -100 to 100
-    #power_percentage = max(min(scaled_power, 100.0), -100.0)
-    power_percentage = np.clip(scaled_power, -100, 100)
 
-    thruster_magnitudes = []
-    if(heading_diff < 0):
-        thruster_magnitudes = [-power_percentage, power_percentage, power_percentage, -power_percentage, 0, 0]
-    elif(heading_diff > 0):
-        thruster_magnitudes = [power_percentage, -power_percentage, -power_percentage, power_percentage, 0, 0]
-    else:
-        thruster_magnitudes = [0, 0, 0, 0, 0, 0]
-    return thruster_magnitudes
 
-def do_both(horizontal_control, heading_control):
-    combined_vectors = np.clip((horizontal_control + heading_control), -100, 100)
-    return combined_vectors
+# def low_pass_filter_moving_median(input_data, window_size):
+#     """
+#     Apply a first-order low-pass filter using the Moving Median method to the input data.
+
+#     Parameters:
+#         input_data (list or numpy array): Input data to be filtered.
+#         window_size (int): The size of the moving window used for computing the median.
+
+#     Returns:
+#         list: Filtered output data.
+#     """
+#     half_window = window_size // 2
+#     filtered_data = []
+
+#     for i in range(len(input_data)):
+#         start_idx = max(0, i - half_window)
+#         end_idx = min(len(input_data), i + half_window + 1)
+#         window = input_data[start_idx:end_idx]
+#         filtered_value = median(window)
+#         filtered_data.append(filtered_value)
+
+#     return filtered_data
+
+# def PIDoutputPosition(horizontal_diff, pid):
+#     pid_input = low_pass_filter_moving_median(horizontal_diff, 100)
+#     #pid = PID(50, 1, -27.5, 100)
+
+#     pid_output = pid.update(pid_input)
+#     return pid_output
+
+# #def thrusterDirections(center, slope):
+
+# def set_horizontal_control(horizontal_diff, pid_output):
+#     # Calculate the power contribution for a thruster based on its angle and PID output
+#     thruster_power = pid_output * np.cos(np.pi/4)
+
+#     # Scale the power to the range of -100 to 100
+#     scaled_power = thruster_power * 100.0
+
+#     # Limit the scaled power to the range of -100 to 100
+#     #power_percentage = max(min(scaled_power, 100.0), -100.0)
+#     power_percentage = np.clip(scaled_power, -100, 100)
+
+#     thruster_magnitudes = []
+#     if(horizontal_diff < 0):
+#         thruster_magnitudes = [-power_percentage, power_percentage, -power_percentage, power_percentage, 0, 0]
+#     elif(horizontal_diff > 0):
+#         thruster_magnitudes = [power_percentage, -power_percentage, power_percentage, -power_percentage, 0, 0]
+#     else:
+#         thruster_magnitudes = [0, 0, 0, 0, 0, 0]
+#     return thruster_magnitudes
+
+
+# def set_heading_control(heading_diff, pid_output):
+#     # Calculate the power contribution for a thruster based on its angle and PID output
+#     thruster_power = pid_output * np.cos(np.pi/4)
+
+#     # Scale the power to the range of -100 to 100
+#     scaled_power = thruster_power * 100.0
+
+#     # Limit the scaled power to the range of -100 to 100
+#     #power_percentage = max(min(scaled_power, 100.0), -100.0)
+#     power_percentage = np.clip(scaled_power, -100, 100)
+
+#     thruster_magnitudes = []
+#     if(heading_diff < 0):
+#         thruster_magnitudes = [-power_percentage, power_percentage, power_percentage, -power_percentage, 0, 0]
+#     elif(heading_diff > 0):
+#         thruster_magnitudes = [power_percentage, -power_percentage, -power_percentage, power_percentage, 0, 0]
+#     else:
+#         thruster_magnitudes = [0, 0, 0, 0, 0, 0]
+#     return thruster_magnitudes
+
+# def do_both(horizontal_control, heading_control):
+#     combined_vectors = np.clip((horizontal_control + heading_control), -100, 100)
+#     return combined_vectors
