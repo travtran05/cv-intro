@@ -93,26 +93,26 @@ def get_slopes_intercepts(lines):
     
     '''
 
-    slopes = []
-    intercepts = []
-
+    resultSet = set() #stores the slope as the key, and the intercept as the data
+    slopeList = []
+    xInterceptList = []
     for line in lines:
-        
         x1, y1, x2, y2 = line[0]
-        try:
-            slope = (y2-y1)/(x2-x1)
-        except ZeroDivisionError or RuntimeWarning:
-            continue
-        slopes.append(slope)
-        try:
-            intercept = ((((1080 - y1)/slope)  )+ x1)
-        except ZeroDivisionError or RuntimeWarning:
-            continue
-        intercepts.append(intercept)
-        
-        
+        slope = (y1-y2)/(x1-x2)
+        if slope == 0:
+            slope = 0.001
+        xIntercept = ((((1080 - y1)/slope)  )+ x1)
+        roundXIntercept = round(xIntercept, 0)
+        if not roundXIntercept in resultSet:
+            resultSet.add(roundXIntercept) 
+            xInterceptList.append(xIntercept)
+        #    resultSet[slope][1] += 1 # keep a counter of how many lines have been iterated through and added to the one slope for averaging later
+            slopeList.append(slope) 
 
-    return slopes, intercepts
+    
+  
+
+    return slopeList, xInterceptList
 
 def detect_lanes(lines):
     slopeList, xInterceptList = get_slopes_intercepts(lines)
@@ -182,13 +182,39 @@ def draw_Single_lane(img,lanes,color = (255, 0, 0)):
     return img
 
 def pick_lane(lanes):
+    maxLaneFitness = -10000000000
     maxDiff = 0
-    for addedLanes in lanes:
-        diff = abs(addedLanes[0][0]  - addedLanes[1][0])
-        if (maxDiff < diff):
-            maxDiff = diff
-            pickedLane = addedLanes
     
+    for addedLanes in lanes:
+        center_slope_weight = 1000
+        try:
+            x1, y1, x2, y2 = addedLanes[0]
+            slope1 = (y1-y2)/(x1-x2)
+            x1, y1, x2, y2 = addedLanes[1]
+            slope2 = (y1-y2)/(x1-x2)
+            LineAngle = angle_between_lines(slope1, slope2)
+            #print(f"I works")
+            center_slope = abs((1/(((1/slope1)+(1/slope2))/2) )* center_slope_weight)
+            
+        except:
+            center_slope = .0001
+            LineAngle = .001
+        diff = abs(addedLanes[0][0]  - addedLanes[1][0])
+        yPoint = addedLanes[0][3]
+        #print(f"yPoint:{yPoint}")
+        VertDistToCenter = abs(yPoint - (1080/2))
+        xPoint = addedLanes[0][2]
+        HortDistToCenter = abs(xPoint - (1920/2))
+        trueDistToCenter = np.sqrt(pow(VertDistToCenter,2)+pow(HortDistToCenter,2))
+    
+        laneFitness = LineAngle #use lineangle as a analog for how close the lane is 
+        print (laneFitness)
+        
+        if (maxLaneFitness < laneFitness and LineAngle < 50):
+            maxLaneFitness = laneFitness
+            pickedLane = addedLanes
+            print (f"picked new lane! fitness: {laneFitness} <---------------------------------------")
+    #print(f"picked: {pickedLane}")
     return pickedLane
 
 def angle_between_lines(m1, m2):
