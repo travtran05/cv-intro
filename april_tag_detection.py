@@ -2,8 +2,19 @@ import cv2
 from dt_apriltags import Detector
 import numpy
 import matplotlib.pyplot as plt
+from PIDcontrols import *
 
+def PID_tags(frameShape, horizontal_distance, vertical_distance, horizontal_pid, vertical_pid):
+    horizontal_error = (frameShape[0]/2)-horizontal_distance
+    vertical_error = (frameShape[1]/2)-vertical_distance
 
+    # Add low pass filter/gaussian blur stuff
+
+    horizontal_output = horizontal_pid.update(horizontal_error)
+    vertical_output = vertical_pid.update(vertical_error)
+
+    return horizontal_output, vertical_output
+    
 
 def detect_tag(video, cameraMatrix = numpy.array([ 1060.71, 0, 960, 0, 1060.71, 540, 0, 0, 1]).reshape((3,3))):
 
