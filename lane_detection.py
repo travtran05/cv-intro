@@ -89,7 +89,7 @@ def get_slopes_intercepts(lines):
             continue
         slopes.append(slope)
         try:
-            intercept = ((((2160 - y1)/slope)  )+ x1)
+            intercept = ((((1080 - y1)/slope)  )+ x1)
         except ZeroDivisionError or RuntimeWarning:
             continue
         intercepts.append(intercept)
