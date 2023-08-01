@@ -8,10 +8,19 @@ Problems 1 and 2 for simple computer vision
 '''
 
 import cv2
+from random import randrange
 import numpy as np
 import matplotlib.pyplot as plt
-import random
-import math 
+from dt_apriltags import Detector
+import matplotlib.cm as cm
+import math
+
+global imgPixelHeight
+imgPixelHeight = 1080
+
+def crop_bottom_half(image):
+    cropped_img = image[int(image.shape[0]/2):image.shape[0]]
+    return cropped_img
 
 def detect_lines(img,threshold1 = 50,threshold2 = 150,apertureSize = 3,minLineLength=100,maxLineGap=10):
 
@@ -29,9 +38,8 @@ def detect_lines(img,threshold1 = 50,threshold2 = 150,apertureSize = 3,minLineLe
     
     '''
 
-   
-    
-    lab= cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
+    croppedImg = crop_bottom_half(img)
+    lab= cv2.cvtColor(croppedImg, cv2.COLOR_BGR2LAB)
     l_channel, a, b = cv2.split(lab)
 
     # Applying CLAHE to L-channel
@@ -45,12 +53,20 @@ def detect_lines(img,threshold1 = 50,threshold2 = 150,apertureSize = 3,minLineLe
     # Converting image from LAB Color model to BGR color spcae
     enhanced_img = cv2.cvtColor(limg, cv2.COLOR_LAB2BGR)
 
-   
+    # Stacking the original image with the enhanced image
+    #result = np.hstack((blurred_image, enhanced_img))
+    #plt.imshow(cv2.cvtColor(enhanced_img, cv2.COLOR_BGR2RGB))
+    #plt.show()
     gray = cv2.cvtColor(enhanced_img, cv2.COLOR_BGR2GRAY) # convert to grayscale
     
     
     edges = cv2.Canny(gray, threshold1, threshold2, apertureSize) # detect edges
-   
+    #plt.imshow(cv2.cvtColor(gray, cv2.COLOR_BGR2RGB))
+    #plt.show()
+    #plt.imshow(cv2.cvtColor(edges, cv2.COLOR_BGR2RGB))
+    #plt.show()
+    #plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+    #plt.show()
     lines = cv2.HoughLinesP(
             edges,
             rho = 1,
@@ -59,9 +75,12 @@ def detect_lines(img,threshold1 = 50,threshold2 = 150,apertureSize = 3,minLineLe
             minLineLength = minLineLength,
             maxLineGap = maxLineGap,
 
-
     )
-    
+    #plt.imshow(cv2.cvtColor(edges, cv2.COLOR_BGR2RGB))
+    #plt.show()
+    #print (lines)
+    lines = PutLinesDown(lines)
+    #be close enough, have similar slopes, be on the same side of the image
     return lines
 
 
@@ -76,12 +95,10 @@ def draw_lines(img, lines, color = (0,255,0)):
         color: the color of the lines (default: (0, 255, 0))
     
     '''
-    try:
-        for line in lines:
-            x1, y1, x2, y2 = line[0]
-            cv2.line(img, (x1, y1), (x2, y2), color, 2)
-    except TypeError:
-        pass
+    halfScreen = imgPixelHeight/2
+    for line in lines:
+        x1, y1, x2, y2 = line[0]
+        cv2.line(img, (x1, y1), (x2, y2), color, 6)
     return img
 
 def get_slopes_intercepts(lines):
@@ -101,13 +118,20 @@ def get_slopes_intercepts(lines):
         slope = (y1-y2)/(x1-x2)
         if slope == 0:
             slope = 0.001
-        xIntercept = ((((1080 - y1)/slope)  )+ x1)
+        xIntercept = ((((imgPixelHeight - y1)/slope)  )+ x1)
         roundXIntercept = round(xIntercept, 0)
         if not roundXIntercept in resultSet:
             resultSet.add(roundXIntercept) 
             xInterceptList.append(xIntercept)
         #    resultSet[slope][1] += 1 # keep a counter of how many lines have been iterated through and added to the one slope for averaging later
             slopeList.append(slope) 
+
+    
+    # for result in resultSet:
+    #     #result[0] = result[0]/result[1] # apply the dividing in the averaging
+    #     xInterceptList.append(result)
+
+    return slopeList, xInterceptList
 
     
   
@@ -135,19 +159,31 @@ def detect_lanes(lines):
                 slopeThing = 1000000
                 if  not slopeList[i] == 0:
                     slopeThing = 1/slopeList[i]
-              
+                #print(f"DistREQ:{abs(xInterceptList[i]-xInterceptList[j])}")
+                #print(f"slopeREQ:{abs(1/ slopeList[i]-1 /slopeList[j])}")
                 # if statement to make sure lane is not too big (multiple lanes as one) not too different in slope (wrong side/ different lanes) and not too horizontal (other lienes reced as pool lane)
+                
                 if(InterceptDist > 100 and InterceptDist< 750 and slopeDiff< 1 and abs(slopeThing) < 3 ):
                     #print(f"1/ slope:{slopeThing}")
                     xPoint = ((slopeList[i] * xInterceptList[i]) - (slopeList[j] * xInterceptList[j]))/(slopeList[i]-slopeList[j])
-                    yPoint = slopeList[i]*(xPoint - xInterceptList[i]) + 1080
+                    yPoint = slopeList[i]*(xPoint - xInterceptList[i]) + imgPixelHeight
                     
-            
-                    lane1 = [xInterceptList[i], 1080, xPoint, yPoint]
-                    lane2 = [xInterceptList[j], 1080, xPoint, yPoint]
+                    # avgSlope = (slopeList[i]+ slopeList[j])/2
+                    # avgInterecept = (xInterceptList[i]+xInterceptList[j])/2
+                    lane1 = [xInterceptList[i], imgPixelHeight, xPoint, yPoint]
+                    lane2 = [xInterceptList[j], imgPixelHeight, xPoint, yPoint]
                     addedlanes = [lane1,lane2]
-                    
+                    #print (f"thiasdfee:{(slopeList[i] * xInterceptList[i]) - slopeList[j] * xInterceptList[j]}")
                     lanes.append(addedlanes)
+
+
+            #lanes.append(lane)
+
+            #
+
+            # if (yPoint> -500 and yPoint< 1080):
+            #     avgInterceptX = (xInterceptList[i] + xInterceptList[j])/2
+            #     lane = [xPoint.item(), avgInterceptX.item(), yPoint.item(), 1080.00]
             #     lanes.append(lane)
 
     return lanes
@@ -162,10 +198,13 @@ def draw_lanes(img,lanes,color = (255, 0, 0)):
 
     '''
 
-    for lane in lanes:
-        for line in lane:
-            x1, y1, x2, y2 = line
-            color = (random.randint(0,255), random.randint(0,255), random.randint(0,255))
+    for addedLanes in lanes:
+        color = (randrange(255),randrange(255),randrange(255))
+        for lane in addedLanes:
+            
+            x1, y1, x2, y2 = lane
+       #     print ("type(x1)")
+         #  print (lane)
             cv2.line(img, (int(x1), int(y1)), (int(x2), int(y2)), color, 6)
     return img
 
@@ -174,8 +213,8 @@ def draw_Single_lane(img,lanes,color = (255, 0, 0)):
     for lane in lanes:
         
         x1, y1, x2, y2 = lane
-    # print ("type(x1)")
-    #  print (lane)
+       # print ("type(x1)")
+      #  print (lane)
         cv2.line(img, (int(x1), int(y1)), (int(x2), int(y2)), color, 6)
     return img
 
@@ -200,13 +239,16 @@ def pick_lane(lanes):
         diff = abs(addedLanes[0][0]  - addedLanes[1][0])
         yPoint = addedLanes[0][3]
         #print(f"yPoint:{yPoint}")
-        VertDistToCenter = abs(yPoint - (1080/2))
+        VertDistToCenter = abs(yPoint - (imgPixelHeight/2))
         xPoint = addedLanes[0][2]
         HortDistToCenter = abs(xPoint - (1920/2))
         trueDistToCenter = np.sqrt(pow(VertDistToCenter,2)+pow(HortDistToCenter,2))
-    
-        laneFitness = LineAngle #use lineangle as a analog for how close the lane is 
-        #print (laneFitness)
+        #print (f"trueDistToCenter:{trueDistToCenter}")
+        #print (f"diff:{diff}")
+        #print (f"center_slope:{center_slope}")
+        #laneFitness = diff - trueDistToCenter/2 + center_slope # calculate fitness, bigger = better, closer to center = better, lower centerline slope = better
+        laneFitness = LineAngle * 10- VertDistToCenter #use lineangle as a analog for how close the lane is 
+        print (laneFitness)
         
         if (maxLaneFitness < laneFitness and LineAngle < 50):
             maxLaneFitness = laneFitness
@@ -225,3 +267,10 @@ def angle_between_lines(m1, m2):
     tan_theta = abs((m2 - m1) / (1 + m1 * m2))
     theta = math.atan(tan_theta)
     return math.degrees(theta)
+
+def PutLinesDown(lines):
+    screenThing = imgPixelHeight/2
+    for line in lines:
+        line[0][1] += screenThing
+        line[0][3] += screenThing
+    return lines
