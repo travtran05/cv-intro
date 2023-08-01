@@ -41,7 +41,7 @@ def detect_tag(video, cameraMatrix = numpy.array([ 1060.71, 0, 960, 0, 1060.71, 
     cv2.line(color_img,(960,0),(960,1080),(0,255,0),5)
     cv2.line(color_img,(0,540),(2000,540),(0,255,0),5)
     #plt.imshow(frame)
-    tags = at_detector.detect(img, True, camera_params, tag_size = 0.1)
+    tags = at_detector.detect(img, False, camera_params, tag_size = 0.1)
     for tag in tags:
         for idx in range(len(tag.corners)):
             cv2.line(color_img, tuple(tag.corners[idx - 1, :].astype(int)), tuple(tag.corners[idx, :].astype(int)), (0, 255, 0))
